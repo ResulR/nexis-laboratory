@@ -1,5 +1,5 @@
 import { Gem, Clock3 } from "lucide-react";
-import aboutLab from "@/assets/about-lab.jpg";
+import aboutLab from "@/assets/nexis-about.jpg";
 
 const PILLARS = ["Precizion", "Estetikë", "Besueshmëri"];
 

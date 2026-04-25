@@ -1,5 +1,5 @@
 import { ArrowRight, Phone, ShieldCheck, Sparkles } from "lucide-react";
-import heroTooth from "@/assets/hero-tooth.jpg";
+import heroTooth from "@/assets/nexis-hero.png";
 
 export function Hero() {
   return (

@@ -1,9 +1,9 @@
-import zirkon from "@/assets/svc-zirkon.jpg";
-import emax from "@/assets/svc-emax.jpg";
-import faseta from "@/assets/svc-faseta.jpg";
-import pfm from "@/assets/svc-pfm.jpg";
-import ibar from "@/assets/svc-ibar.jpg";
-import implant from "@/assets/svc-implant.jpg";
+import zirkon from "@/assets/nexis-zirkon.jpg";
+import emax from "@/assets/nexis-emax.jpg";
+import faseta from "@/assets/nexis-faseta.jpg";
+import pfm from "@/assets/nexis-metal-porcelan.jpg";
+import ibar from "@/assets/nexis-ibar.jpg";
+import implant from "@/assets/nexis-implant.jpg";
 
 const SERVICES = [
   {
