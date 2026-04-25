@@ -1,3 +1,4 @@
+import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { Resend } from "resend";
 
 type ContactPayload = {
@@ -6,8 +7,6 @@ type ContactPayload = {
   clinic?: string;
   message?: string;
 };
-
-const resend = new Resend(process.env.RESEND_API_KEY);
 
 function getRecipients() {
   return [
@@ -29,29 +28,56 @@ function escapeHtml(value: string) {
     .replaceAll("'", "&#039;");
 }
 
-export async function POST(request: Request) {
+function parsePayload(req: VercelRequest): ContactPayload {
+  if (!req.body) {
+    return {};
+  }
+
+  if (typeof req.body === "string") {
+    return JSON.parse(req.body) as ContactPayload;
+  }
+
+  return req.body as ContactPayload;
+}
+
+export default async function handler(req: VercelRequest, res: VercelResponse) {
+  res.setHeader("Cache-Control", "no-store");
+
+  if (req.method === "GET") {
+    return res.status(200).json({
+      ok: true,
+      endpoint: "contact",
+    });
+  }
+
+  if (req.method !== "POST") {
+    return res.status(405).json({
+      error: "Method not allowed",
+    });
+  }
+
   if (!process.env.RESEND_API_KEY) {
-    return Response.json(
-      { error: "Email service is not configured" },
-      { status: 500 },
-    );
+    return res.status(500).json({
+      error: "Email service is not configured",
+    });
   }
 
   const recipients = getRecipients();
 
   if (recipients.length === 0) {
-    return Response.json(
-      { error: "Contact recipients are not configured" },
-      { status: 500 },
-    );
+    return res.status(500).json({
+      error: "Contact recipients are not configured",
+    });
   }
 
   let payload: ContactPayload;
 
   try {
-    payload = await request.json();
+    payload = parsePayload(req);
   } catch {
-    return Response.json({ error: "Invalid JSON body" }, { status: 400 });
+    return res.status(400).json({
+      error: "Invalid JSON body",
+    });
   }
 
   const name = String(payload.name || "").trim();
@@ -60,22 +86,27 @@ export async function POST(request: Request) {
   const message = String(payload.message || "").trim();
 
   if (!name || !email || !message) {
-    return Response.json(
-      { error: "Name, email and message are required" },
-      { status: 400 },
-    );
+    return res.status(400).json({
+      error: "Name, email and message are required",
+    });
   }
 
   if (!isValidEmail(email)) {
-    return Response.json({ error: "Invalid email address" }, { status: 400 });
+    return res.status(400).json({
+      error: "Invalid email address",
+    });
   }
 
   if (name.length > 120 || email.length > 160 || clinic.length > 160) {
-    return Response.json({ error: "Input is too long" }, { status: 400 });
+    return res.status(400).json({
+      error: "Input is too long",
+    });
   }
 
   if (message.length > 3000) {
-    return Response.json({ error: "Message is too long" }, { status: 400 });
+    return res.status(400).json({
+      error: "Message is too long",
+    });
   }
 
   const safeName = escapeHtml(name);
@@ -84,6 +115,8 @@ export async function POST(request: Request) {
   const safeMessage = escapeHtml(message).replaceAll("\n", "<br />");
 
   try {
+    const resend = new Resend(process.env.RESEND_API_KEY);
+
     await resend.emails.send({
       from:
         process.env.RESEND_FROM_EMAIL ||
@@ -104,14 +137,14 @@ export async function POST(request: Request) {
       `,
     });
 
-    return Response.json({ ok: true });
+    return res.status(200).json({
+      ok: true,
+    });
   } catch (error) {
     console.error("Resend contact error:", error);
 
-    return Response.json({ error: "Email could not be sent" }, { status: 500 });
+    return res.status(500).json({
+      error: "Email could not be sent",
+    });
   }
-}
-
-export function GET() {
-  return Response.json({ ok: true, endpoint: "contact" });
 }
