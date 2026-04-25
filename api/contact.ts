@@ -9,10 +9,12 @@ type ContactPayload = {
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-const recipients = [
-  process.env.CONTACT_EMAIL_PRIMARY,
-  process.env.CONTACT_EMAIL_SECONDARY,
-].filter(Boolean) as string[];
+function getRecipients() {
+  return [
+    process.env.CONTACT_EMAIL_PRIMARY,
+    process.env.CONTACT_EMAIL_SECONDARY,
+  ].filter(Boolean) as string[];
+}
 
 function isValidEmail(email: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -27,17 +29,15 @@ function escapeHtml(value: string) {
     .replaceAll("'", "&#039;");
 }
 
-export default async function handler(req: Request): Promise<Response> {
-  if (req.method !== "POST") {
-    return Response.json({ error: "Method not allowed" }, { status: 405 });
-  }
-
+export async function POST(request: Request) {
   if (!process.env.RESEND_API_KEY) {
     return Response.json(
       { error: "Email service is not configured" },
       { status: 500 },
     );
   }
+
+  const recipients = getRecipients();
 
   if (recipients.length === 0) {
     return Response.json(
@@ -49,7 +49,7 @@ export default async function handler(req: Request): Promise<Response> {
   let payload: ContactPayload;
 
   try {
-    payload = await req.json();
+    payload = await request.json();
   } catch {
     return Response.json({ error: "Invalid JSON body" }, { status: 400 });
   }
@@ -107,6 +107,11 @@ export default async function handler(req: Request): Promise<Response> {
     return Response.json({ ok: true });
   } catch (error) {
     console.error("Resend contact error:", error);
+
     return Response.json({ error: "Email could not be sent" }, { status: 500 });
   }
+}
+
+export function GET() {
+  return Response.json({ ok: true, endpoint: "contact" });
 }
