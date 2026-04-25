@@ -57,8 +57,8 @@ export function Services() {
             për stomatologjinë moderne
           </h2>
           <p className="mt-5 text-base sm:text-lg text-ink-soft leading-relaxed text-pretty">
-            Materiale të certifikuara, prodhim me precizion digital dhe kontroll
-            i rreptë cilësie për çdo restaurim.
+            Materiale të përzgjedhura, prodhim me precizion dhe kontroll i
+            kujdesshëm cilësie për çdo restaurim.
           </p>
         </div>
 
@@ -94,7 +94,7 @@ export function Services() {
                 </p>
                 <div className="mt-5 pt-4 border-t border-line flex items-center justify-between text-xs">
                   <span className="text-ink-soft">
-                    Materiale të certifikuara
+                    Materiale të përzgjedhura
                   </span>
                   <span className="text-primary font-medium opacity-0 group-hover:opacity-100 transition-opacity">
                     →

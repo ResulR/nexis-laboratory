@@ -52,8 +52,8 @@ export function Hero() {
             <dl className="mt-12 grid grid-cols-3 gap-6 max-w-xl">
               {[
                 { v: "15+", l: "vite përvojë" },
-                { v: "100%", l: "materiale premium" },
-                { v: "24h", l: "komunikim i shpejtë" },
+                { v: "Lab", l: "kontroll i brendshëm" },
+                { v: "B2B", l: "për klinika partnere" },
               ].map((s) => (
                 <div key={s.l} className="border-l-2 border-line pl-4">
                   <dt className="font-display text-2xl sm:text-3xl font-semibold text-ink">
@@ -92,10 +92,10 @@ export function Hero() {
               </div>
               <div>
                 <p className="text-sm font-semibold text-ink leading-tight">
-                  Cilësi e certifikuar
+                  Cilësi e kontrolluar
                 </p>
                 <p className="mt-1 text-xs text-ink-soft leading-snug">
-                  Materiale të kontrolluara në çdo fazë të prodhimit.
+                  Kontroll i kujdesshëm në çdo fazë të prodhimit.
                 </p>
               </div>
             </div>
