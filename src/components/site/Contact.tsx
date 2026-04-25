@@ -1,14 +1,54 @@
 import { useState } from "react";
-import { Phone, Mail, MapPin, Clock, Send } from "lucide-react";
+import { Phone, MapPin, Clock, Send } from "lucide-react";
+
+type SubmitStatus = "idle" | "loading" | "success" | "error";
 
 export function Contact() {
-  const [sent, setSent] = useState(false);
+  const [status, setStatus] = useState<SubmitStatus>("idle");
+  const [errorMessage, setErrorMessage] = useState("");
 
-  function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setSent(true);
-    setTimeout(() => setSent(false), 4000);
-    (e.currentTarget as HTMLFormElement).reset();
+
+    const form = e.currentTarget;
+    const formData = new FormData(form);
+
+    const payload = {
+      name: String(formData.get("name") || "").trim(),
+      email: String(formData.get("email") || "").trim(),
+      clinic: String(formData.get("clinic") || "").trim(),
+      message: String(formData.get("message") || "").trim(),
+    };
+
+    setStatus("loading");
+    setErrorMessage("");
+
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        const data = await response.json().catch(() => null);
+        throw new Error(data?.error || "Message could not be sent");
+      }
+
+      setStatus("success");
+      form.reset();
+
+      setTimeout(() => {
+        setStatus("idle");
+      }, 5000);
+    } catch {
+      setStatus("error");
+      setErrorMessage(
+        "Mesazhi nuk u dërgua. Ju lutemi provoni përsëri ose na telefononi direkt.",
+      );
+    }
   }
 
   return (
@@ -23,8 +63,7 @@ export function Contact() {
             <span className="italic font-normal">rastin tuaj.</span>
           </h2>
           <p className="mt-6 text-base sm:text-lg text-ink-soft leading-relaxed text-pretty">
-            Përgjigjemi brenda 24 orëve. Për raste urgjente, telefononi
-            drejtpërdrejt.
+            Për raste urgjente, telefononi drejtpërdrejt.
           </p>
 
           <div className="mt-10 space-y-5">
@@ -33,12 +72,6 @@ export function Contact() {
               label="Telefon"
               value="+383 44 379 656"
               href="tel:+38344379656"
-            />
-            <Info
-              icon={Mail}
-              label="Email"
-              value="nexis.laboratory@gmail.com"
-              href="mailto:nexis.laboratory@gmail.com"
             />
             <Info icon={MapPin} label="Adresa" value="Prishtinë, Kosovë" />
             <Info
@@ -58,9 +91,11 @@ export function Contact() {
               <Field name="name" label="Emri juaj" required />
               <Field name="email" type="email" label="Email" required />
             </div>
+
             <div className="mt-5">
               <Field name="clinic" label="Klinika / Praktika" />
             </div>
+
             <div className="mt-5">
               <label className="block text-xs font-medium text-ink-soft uppercase tracking-wider">
                 Mesazhi <span className="text-teal">*</span>
@@ -74,16 +109,29 @@ export function Contact() {
               />
             </div>
 
+            {status === "success" && (
+              <p className="mt-5 rounded-xl bg-surface px-4 py-3 text-sm font-medium text-ink">
+                Mesazhi u dërgua me sukses. Do t’ju kontaktojmë sa më shpejt.
+              </p>
+            )}
+
+            {status === "error" && (
+              <p className="mt-5 rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm font-medium text-destructive">
+                {errorMessage}
+              </p>
+            )}
+
             <div className="mt-6 flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between gap-4">
               <p className="text-xs text-ink-soft">
                 Të dhënat tuaja përdoren vetëm për t'ju kontaktuar.
               </p>
               <button
                 type="submit"
-                className="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-6 py-3.5 text-sm font-medium text-primary-foreground shadow-soft hover:shadow-elev transition"
+                disabled={status === "loading"}
+                className="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-6 py-3.5 text-sm font-medium text-primary-foreground shadow-soft hover:shadow-elev transition disabled:cursor-not-allowed disabled:opacity-70"
               >
                 <Send className="h-4 w-4" />
-                {sent ? "Mesazhi u dërgua" : "Dërgo mesazhin"}
+                {status === "loading" ? "Duke dërguar..." : "Dërgo mesazhin"}
               </button>
             </div>
           </form>
@@ -117,6 +165,7 @@ function Info({
       </div>
     </div>
   );
+
   return href ? (
     <a href={href} className="block hover:opacity-80 transition">
       {content}
