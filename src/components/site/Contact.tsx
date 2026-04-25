@@ -1,13 +1,5 @@
 import { useState } from "react";
-import {
-  Phone,
-  Mail,
-  MapPin,
-  Clock,
-  Send,
-  Instagram,
-  Facebook,
-} from "lucide-react";
+import { Phone, Mail, MapPin, Clock, Send } from "lucide-react";
 
 export function Contact() {
   const [sent, setSent] = useState(false);
@@ -54,23 +46,6 @@ export function Contact() {
               label="Orari"
               value="E hënë – E premte · 09:00 – 18:00"
             />
-          </div>
-
-          <div className="mt-8 flex items-center gap-3">
-            <a
-              href="#"
-              aria-label="Instagram"
-              className="grid h-10 w-10 place-items-center rounded-full hairline bg-background text-ink hover:bg-surface transition"
-            >
-              <Instagram className="h-4 w-4" />
-            </a>
-            <a
-              href="#"
-              aria-label="Facebook"
-              className="grid h-10 w-10 place-items-center rounded-full hairline bg-background text-ink hover:bg-surface transition"
-            >
-              <Facebook className="h-4 w-4" />
-            </a>
           </div>
         </div>
 
