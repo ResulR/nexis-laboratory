@@ -1,11 +1,19 @@
+import nexisLogoMark from "@/assets/nexis-logo-mark-white.png";
+
 export function Footer() {
   return (
     <footer className="border-t border-line bg-surface">
       <div className="container-page py-14 grid gap-10 md:grid-cols-12">
         <div className="md:col-span-5">
           <div className="flex items-center gap-2.5">
-            <span className="grid h-9 w-9 place-items-center rounded-lg bg-primary text-primary-foreground font-display font-semibold">
-              N
+            <span className="grid h-9 w-9 place-items-center rounded-lg bg-primary p-1.5">
+              <img
+                src={nexisLogoMark}
+                alt="NEXIS Laboratory"
+                className="h-full w-full object-contain"
+                width={36}
+                height={36}
+              />
             </span>
             <span className="leading-tight">
               <span className="block font-display text-lg font-semibold tracking-tight text-ink">

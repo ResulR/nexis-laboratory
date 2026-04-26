@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Phone, Menu, X } from "lucide-react";
+import nexisLogoMark from "@/assets/nexis-logo-mark-white.png";
 
 const NAV = [
   { href: "#rreth", label: "Rreth nesh" },
@@ -30,8 +31,14 @@ export function Header() {
     >
       <div className="container-page flex h-16 md:h-20 items-center justify-between gap-6">
         <a href="#top" className="flex items-center gap-2.5 group">
-          <span className="grid h-9 w-9 place-items-center rounded-lg bg-primary text-primary-foreground font-display font-semibold">
-            N
+          <span className="grid h-9 w-9 place-items-center rounded-lg bg-primary p-1.5">
+            <img
+              src={nexisLogoMark}
+              alt="NEXIS Laboratory"
+              className="h-full w-full object-contain"
+              width={36}
+              height={36}
+            />
           </span>
           <span className="leading-tight">
             <span className="block font-display text-lg font-semibold tracking-tight text-ink">
